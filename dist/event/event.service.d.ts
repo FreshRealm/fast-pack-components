@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { EnvConfigService } from '../env-config/env-config.service';
+import { AppConfigInterface } from '../config/config.interface';
 export declare class EventService {
     private http;
-    private envConfigService;
-    constructor(http: HttpClient, envConfigService: EnvConfigService);
+    private appConfig;
+    constructor(http: HttpClient, appConfig: AppConfigInterface);
     createEvent(name: string, eventData?: any): void;
 }

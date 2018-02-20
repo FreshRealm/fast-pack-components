@@ -1,5 +1,5 @@
-import { EnvConfig } from './../env-config/env-config.interface';
 import { ModuleWithProviders } from '@angular/core';
+import { AppConfigInterface } from '../config/config.interface';
 export declare class AuthModule {
-    static forRoot(envConfig: EnvConfig): ModuleWithProviders;
+    static forRoot(config: AppConfigInterface): ModuleWithProviders;
 }

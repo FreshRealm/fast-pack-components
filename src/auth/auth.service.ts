@@ -1,8 +1,9 @@
 import { UserModel } from '../user/user.model';
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { CookieService } from 'ngx-cookie';
 import { HttpClient } from '@angular/common/http';
-import { EnvConfigService } from '../env-config/env-config.service';
+import { AppConfigInterface } from '../config/config.interface';
+
 
 @Injectable()
 export class AuthService {
@@ -11,7 +12,7 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private envConfigService: EnvConfigService,
+    @Inject('appConfig') private appConfig: AppConfigInterface,
     private cookieService: CookieService
   ) {
     this.token = this.cookieService.get('fr-jwt');
@@ -19,7 +20,7 @@ export class AuthService {
 
   isAuthenticated(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.http.get<UserModel>(`${this.envConfigService.config.environmentConfig.userServiceAPI}/api/v1/current-user`).subscribe(data => {
+      this.http.get<UserModel>(`${this.appConfig.userServiceAPI}/api/v1/current-user`).subscribe(data => {
         if (!data || !data.roles) {
           resolve(false);
         }

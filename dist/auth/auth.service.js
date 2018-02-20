@@ -1,19 +1,25 @@
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 import { UserModel } from '../user/user.model';
-import { Injectable } from '@angular/core';
-import { CookieService } from 'ngx-cookie';
-import { HttpClient } from '@angular/common/http';
-import { EnvConfigService } from '../env-config/env-config.service';
+import { Injectable, Inject } from '@angular/core';
 var AuthService = /** @class */ (function () {
-    function AuthService(http, envConfigService, cookieService) {
+    function AuthService(http, appConfig, cookieService) {
         this.http = http;
-        this.envConfigService = envConfigService;
+        this.appConfig = appConfig;
         this.cookieService = cookieService;
         this.token = this.cookieService.get('fr-jwt');
     }
     AuthService.prototype.isAuthenticated = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            _this.http.get(_this.envConfigService.config.environmentConfig.userServiceAPI + "/api/v1/current-user").subscribe(function (data) {
+            _this.http.get(_this.appConfig.userServiceAPI + "/api/v1/current-user").subscribe(function (data) {
                 if (!data || !data.roles) {
                     resolve(false);
                 }
@@ -64,15 +70,10 @@ var AuthService = /** @class */ (function () {
         }
         return true;
     };
-    AuthService.decorators = [
-        { type: Injectable },
-    ];
-    /** @nocollapse */
-    AuthService.ctorParameters = function () { return [
-        { type: HttpClient, },
-        { type: EnvConfigService, },
-        { type: CookieService, },
-    ]; };
+    AuthService = __decorate([
+        Injectable(),
+        __param(1, Inject('appConfig'))
+    ], AuthService);
     return AuthService;
 }());
 export { AuthService };

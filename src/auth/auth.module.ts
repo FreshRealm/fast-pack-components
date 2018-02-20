@@ -1,12 +1,11 @@
 import { CookieModule } from 'ngx-cookie';
 import { AuthInterceptor } from './auth.interceptor';
 import { AuthGuard } from './auth.guard';
-import { EnvConfig } from './../env-config/env-config.interface';
 import { AuthService } from './auth.service';
 import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { EnvConfigService } from '../env-config/env-config.service';
 import { HttpClientModule } from '@angular/common/http';
+import { AppConfigInterface } from '../config/config.interface';
 
 @NgModule({
   imports: [
@@ -23,13 +22,13 @@ import { HttpClientModule } from '@angular/common/http';
   exports: []
 })
 export class AuthModule {
-  static forRoot(envConfig: EnvConfig): ModuleWithProviders {
+  static forRoot(config: AppConfigInterface): ModuleWithProviders {
     return {
       ngModule: AuthModule,
       providers: [
-        EnvConfigService, {
-          provide: 'envConfig',
-          useValue: envConfig
+        {
+          provide: 'appConfig',
+          useValue: config
         }]
     };
   }

@@ -1,4 +1,4 @@
-export interface EnvironmentConfigInterface {
+export interface AppConfigInterface {
   userServiceAPI: string;
   warehouseCode: string;
   eventServiceAPI: string;
@@ -6,6 +6,6 @@ export interface EnvironmentConfigInterface {
   serviceName: string;
 }
 
-export interface EnvConfig {
-  environmentConfig: EnvironmentConfigInterface;
+export interface LocalStorageConfigInterface {
+  prefix: string;
 }

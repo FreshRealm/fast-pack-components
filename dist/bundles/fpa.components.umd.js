@@ -459,7 +459,7 @@ function cookieServiceFactory(cookieOptionsProvider) {
     return new CookieService(cookieOptionsProvider);
 }
 
-var __extends = (undefined && undefined.__extends) || (function () {
+var __extends = (window && window.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
         function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -563,31 +563,17 @@ var CookieModule = (function () {
     return CookieModule;
 }());
 
-var EnvConfigService = /** @class */ (function () {
-    function EnvConfigService(config) {
-        this.config = config;
-    }
-    EnvConfigService.decorators = [
-        { type: core.Injectable },
-    ];
-    /** @nocollapse */
-    EnvConfigService.ctorParameters = function () { return [
-        { type: undefined, decorators: [{ type: core.Inject, args: ['envConfig',] },] },
-    ]; };
-    return EnvConfigService;
-}());
-
 var AuthService = /** @class */ (function () {
-    function AuthService(http$$1, envConfigService, cookieService) {
+    function AuthService(http$$1, appConfig, cookieService) {
         this.http = http$$1;
-        this.envConfigService = envConfigService;
+        this.appConfig = appConfig;
         this.cookieService = cookieService;
         this.token = this.cookieService.get('fr-jwt');
     }
     AuthService.prototype.isAuthenticated = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            _this.http.get(_this.envConfigService.config.environmentConfig.userServiceAPI + "/api/v1/current-user").subscribe(function (data) {
+            _this.http.get(_this.appConfig.userServiceAPI + "/api/v1/current-user").subscribe(function (data) {
                 if (!data || !data.roles) {
                     resolve(false);
                 }
@@ -644,7 +630,7 @@ var AuthService = /** @class */ (function () {
     /** @nocollapse */
     AuthService.ctorParameters = function () { return [
         { type: http.HttpClient, },
-        { type: EnvConfigService, },
+        { type: undefined, decorators: [{ type: core.Inject, args: ['appConfig',] },] },
         { type: CookieService, },
     ]; };
     return AuthService;
@@ -674,16 +660,16 @@ var AuthInterceptor = /** @class */ (function () {
 }());
 
 var AuthGuard = /** @class */ (function () {
-    function AuthGuard(router$$1, auth, envConfig) {
+    function AuthGuard(router$$1, auth, appConfig) {
         this.router = router$$1;
         this.auth = auth;
-        this.envConfig = envConfig;
+        this.appConfig = appConfig;
     }
     AuthGuard.prototype.canActivate = function (next, state) {
         var _this = this;
         return this.auth.isAuthenticated().then(function (isAuthenticated) {
             if (!isAuthenticated) {
-                window.location.href = _this.envConfig.config.environmentConfig.parentURL;
+                window.location.href = _this.appConfig.parentURL;
                 return false;
             }
             if (!next.data || !next.data.allowedRoles) {
@@ -691,9 +677,9 @@ var AuthGuard = /** @class */ (function () {
             }
             var hasRole = _this.auth.hasRequiredRole(next.data.allowedRoles);
             if (!hasRole) {
-                window.location.href = _this.envConfig.config.environmentConfig.parentURL
+                window.location.href = _this.appConfig.parentURL
                     + '/no-access?subAppAccess='
-                    + _this.envConfig.config.environmentConfig.serviceName;
+                    + _this.appConfig.serviceName;
                 return false;
             }
             return true;
@@ -706,7 +692,7 @@ var AuthGuard = /** @class */ (function () {
     AuthGuard.ctorParameters = function () { return [
         { type: router.Router, },
         { type: AuthService, },
-        { type: EnvConfigService, },
+        { type: undefined, decorators: [{ type: core.Inject, args: ['appConfig',] },] },
     ]; };
     return AuthGuard;
 }());
@@ -714,13 +700,13 @@ var AuthGuard = /** @class */ (function () {
 var AuthModule = /** @class */ (function () {
     function AuthModule() {
     }
-    AuthModule.forRoot = function (envConfig) {
+    AuthModule.forRoot = function (config) {
         return {
             ngModule: AuthModule,
             providers: [
-                EnvConfigService, {
-                    provide: 'envConfig',
-                    useValue: envConfig
+                {
+                    provide: 'appConfig',
+                    useValue: config
                 }
             ]
         };
@@ -16002,18 +15988,18 @@ var AlertModule = /** @class */ (function () {
 }());
 
 var EventService = /** @class */ (function () {
-    function EventService(http$$1, envConfigService) {
+    function EventService(http$$1, appConfig) {
         this.http = http$$1;
-        this.envConfigService = envConfigService;
+        this.appConfig = appConfig;
     }
     EventService.prototype.createEvent = function (name, eventData) {
         var event = {
             name: name,
             type: 'fast-pack',
-            warehouseCode: this.envConfigService.config.environmentConfig.warehouseCode,
+            warehouseCode: this.appConfig.warehouseCode,
             data: eventData
         };
-        this.http.post(this.envConfigService.config.environmentConfig.eventServiceAPI + "/api/v1/events", event).toPromise().catch(function (err) {
+        this.http.post(this.appConfig.eventServiceAPI + "/api/v1/events", event).toPromise().catch(function (err) {
             // do nothing with rejection
         });
     };
@@ -16023,7 +16009,7 @@ var EventService = /** @class */ (function () {
     /** @nocollapse */
     EventService.ctorParameters = function () { return [
         { type: http.HttpClient, },
-        { type: EnvConfigService, },
+        { type: undefined, decorators: [{ type: core.Inject, args: ['appConfig',] },] },
     ]; };
     return EventService;
 }());
@@ -16031,13 +16017,13 @@ var EventService = /** @class */ (function () {
 var EventModule = /** @class */ (function () {
     function EventModule() {
     }
-    EventModule.forRoot = function (envConfig) {
+    EventModule.forRoot = function (config) {
         return {
             ngModule: EventModule,
             providers: [
-                EnvConfigService, {
-                    provide: 'envConfig',
-                    useValue: envConfig
+                {
+                    provide: 'appConfig',
+                    useValue: config
                 }
             ]
         };

@@ -17,7 +17,7 @@
       ],
       "ngx-cookie": [
         "node_modules/ngx-cookie"
-      ]
+      ],
     },
     "rootDir": "./src",
     "outDir": "dist",
@@ -35,6 +35,9 @@
   },
   "files": [
     "src/index.ts",
+  ],
+  "include": [
+    "src/**/*.ts"
   ],
   "angularCompilerOptions": {
     "strictMetadataEmit": true,

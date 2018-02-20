@@ -1,13 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
-import { EnvConfigService } from '../env-config/env-config.service';
+import { AppConfigInterface } from '../config/config.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private router: Router, private auth: AuthService, private envConfig: EnvConfigService) {
+  constructor(
+    private router: Router,
+    private auth: AuthService,
+    @Inject('appConfig') private appConfig: AppConfigInterface,
+  ) {
   }
 
   canActivate(
@@ -16,7 +20,7 @@ export class AuthGuard implements CanActivate {
 
     return this.auth.isAuthenticated().then((isAuthenticated: boolean) => {
       if (!isAuthenticated) {
-        window.location.href = this.envConfig.config.environmentConfig.parentURL;
+        window.location.href = this.appConfig.parentURL;
         return false;
       }
 
@@ -26,9 +30,9 @@ export class AuthGuard implements CanActivate {
 
       const hasRole = this.auth.hasRequiredRole(next.data.allowedRoles);
       if (!hasRole) {
-        window.location.href = this.envConfig.config.environmentConfig.parentURL
+        window.location.href = this.appConfig.parentURL
           + '/no-access?subAppAccess='
-          + this.envConfig.config.environmentConfig.serviceName;
+          + this.appConfig.serviceName;
         return false;
       }
 

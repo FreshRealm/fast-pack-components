@@ -35,5 +35,8 @@ export default {
     '@angular/common/http',
     '@angular/core',
     '@angular/router',
-  ]
+  ],
+  moduleContext: {
+    'node_modules/ngx-cookie/src/cookie-backend.service.js': 'window'
+  }
 };

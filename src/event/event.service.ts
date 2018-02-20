@@ -1,24 +1,24 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { EnvConfigService } from '../env-config/env-config.service';
+import { AppConfigInterface } from '../config/config.interface';
 
 @Injectable()
 export class EventService {
 
   constructor(
     private http: HttpClient,
-    private envConfigService: EnvConfigService
+    @Inject('appConfig') private appConfig: AppConfigInterface
   ) { }
 
   public createEvent(name: string, eventData?: any) {
     const event = {
       name: name,
       type: 'fast-pack',
-      warehouseCode: this.envConfigService.config.environmentConfig.warehouseCode,
+      warehouseCode: this.appConfig.warehouseCode,
       data: eventData
     };
 
-    this.http.post(`${this.envConfigService.config.environmentConfig.eventServiceAPI}/api/v1/events`, event).toPromise().catch((err) => {
+    this.http.post(`${this.appConfig.eventServiceAPI}/api/v1/events`, event).toPromise().catch((err) => {
       // do nothing with rejection
     });
   }

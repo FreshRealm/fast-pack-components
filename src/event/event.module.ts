@@ -1,22 +1,21 @@
-import { EnvConfig } from './../env-config/env-config.interface';
 import { HttpClientModule } from '@angular/common/http';
 import { EventService } from './event.service';
 import { CommonModule } from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
-import { EnvConfigService } from '../env-config/env-config.service';
+import { AppConfigInterface } from '../config/config.interface';
 
 @NgModule({
   imports: [CommonModule, HttpClientModule],
   providers: [EventService]
 })
 export class EventModule {
-  static forRoot(envConfig: EnvConfig): ModuleWithProviders {
+  static forRoot(config: AppConfigInterface): ModuleWithProviders {
     return {
       ngModule: EventModule,
       providers: [
-        EnvConfigService, {
-          provide: 'envConfig',
-          useValue: envConfig
+        {
+          provide: 'appConfig',
+          useValue: config
         }]
     };
   }
